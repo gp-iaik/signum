@@ -10,7 +10,6 @@ import com.ionspin.kotlin.bignum.modular.ModularBigInteger
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.shouldBe
 import org.bouncycastle.jce.ECNamedCurveTable
@@ -43,7 +42,7 @@ val ECMathTest  by testSuite {
         }
     }
     "Addition: group axioms" - {
-        withDataSuites(ECCurve.entries) { curve ->
+        withData(ECCurve.entries) - { curve ->
             withData(nameFn = { (a, b, c) -> "(a=$a, b=$b, c=$c)" },
                 generateSequence {
                     Triple(curve.randomPoint(), curve.randomPoint(), curve.randomPoint())
@@ -59,7 +58,7 @@ val ECMathTest  by testSuite {
         }
     }
     "Multiplication: axioms" - {
-        withDataSuites(ECCurve.entries) { curve ->
+        withData(ECCurve.entries) - { curve ->
             withData(nameFn = { (a, b, x, y) -> "(a=$a, b=$b, x=$x, y=$y)" },
                 generateSequence {
                     Quadruple(curve.randomScalar(), curve.randomScalar(), curve.randomPoint(), curve.randomPoint())
@@ -74,7 +73,7 @@ val ECMathTest  by testSuite {
     }
     /* from http://point-at-infinity.org/ecc/nisttv */
     "Multiplication: PaI test suite" - {
-        withDataSuites(nameFn = { (curve, _) -> curve.name },
+        withData(nameFn = { (curve, _) -> curve.name },
             sequence {
                 yield(Pair(ECCurve.SECP_256_R_1, """
                     k = 1
@@ -706,7 +705,7 @@ val ECMathTest  by testSuite {
                     x = 00C6858E06B70404E9CD9E3ECB662395B4429C648139053FB521F828AF606B4D3DBAA14B5E77EFE75928FE1DC127A2FFA8DE3348B3C1856A429BF97E7E31C2E5BD66
                     y = 00E7C6D6958765C43FFBA375A04BD382E426670ABBB6A864BB97E85042E8D8C199D368118D66A10BD9BF3AAF46FEC052F89ECAC38F795D8D3DBF77416B89602E99AF
                 """.trimIndent()))
-        }) { (curve, testInfo) ->
+        }) - { (curve, testInfo) ->
             val pattern = Regex("k = ([0-9]+)\\s+x = ([0-9A-F]+)\\s+y = ([0-9A-F]+)")
             withData(nameFn = { (k, _, _) -> "k = $k" },
                 pattern.findAll(testInfo).map {
@@ -725,7 +724,7 @@ val ECMathTest  by testSuite {
     }
     "Multiplication: BouncyCastle ECDSA key pairs" - {
         Security.addProvider(BouncyCastleProvider())
-        withDataSuites(ECCurve.entries) { curve ->
+        withData(ECCurve.entries) - { curve ->
             withData(generateSequence {
                 val keyPair = KeyPairGenerator.getInstance("EC", "BC").apply {
                     initialize(ECNamedCurveTable.getParameterSpec(curve.oid.toString()))
@@ -741,7 +740,7 @@ val ECMathTest  by testSuite {
         }
     }
     "Multiplication: Strauss-Shamir trick" - {
-        withDataSuites(ECCurve.entries) { curve ->
+        withData(ECCurve.entries) - { curve ->
             withData(nameFn = { (a, b, x, y) -> "(a=$a, b=$b, x=$x, y=$y)" },
                 generateSequence {
                     Quadruple(curve.randomScalar(),curve.randomScalar(),curve.randomPoint(),curve.randomPoint())
@@ -752,7 +751,7 @@ val ECMathTest  by testSuite {
         }
     }
     "Multiplication: Montgomery ladder" - {
-        withDataSuites(ECCurve.entries) { curve ->
+        withData(ECCurve.entries) - { curve ->
             withData(generateSequence { Pair(curve.randomScalar(), curve.randomPoint())}.take(10))
             { (k,P) ->
                 montgomeryMul(k.residue,P) shouldBe (k*P)

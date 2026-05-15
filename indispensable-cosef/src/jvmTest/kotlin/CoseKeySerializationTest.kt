@@ -15,7 +15,6 @@ import at.asitplus.signum.indispensable.toJcaPublicKey
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.assertions.withClue
 import io.kotest.matchers.ints.shouldBeGreaterThan
@@ -113,7 +112,7 @@ val CoseKeySerializationTest by testSuite {
 
 
         "EC" - {
-            withDataSuites(256, 384, 521) { bits ->
+            withData(256, 384, 521) - { bits ->
                 val keys = List<ECPublicKey>(25600 / bits) {
                     val ecKp = KeyPairGenerator.getInstance("EC", "BC").apply {
                         initialize(bits)
@@ -176,7 +175,7 @@ val CoseKeySerializationTest by testSuite {
         }
 
         "RSA" - {
-            withDataSuites(512, 1024, 2048, 3072, 4096) { bits ->
+            withData(512, 1024, 2048, 3072, 4096) - { bits ->
                 val keys = List<RSAPublicKey>(13000 / bits) {
                     val rsaKP = KeyPairGenerator.getInstance("RSA").apply {
                         initialize(bits)

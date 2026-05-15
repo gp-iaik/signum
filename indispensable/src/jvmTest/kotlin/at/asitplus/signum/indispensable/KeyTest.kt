@@ -15,7 +15,6 @@ import io.kotest.assertions.withClue
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -40,7 +39,7 @@ val KeyTest  by testSuite {
     Security.addProvider(BouncyCastleProvider())
 
     "EC" - {
-        withDataSuites(listOf(256, 384, 521)) { bits ->
+        withData(listOf(256, 384, 521)) - { bits ->
             val keys = List(25600 / bits) {
                 val ecKp = KeyPairGenerator.getInstance("EC", "BC").apply {
                     initialize(bits)
@@ -104,7 +103,7 @@ val KeyTest  by testSuite {
     }
 
     "RSA" - {
-        withDataSuites(512, 1024, 2048, 3072, 4096) { bits ->
+        withData(512, 1024, 2048, 3072, 4096) - { bits ->
             val keys = List(13000 / bits) {
                 val rsaKP = KeyPairGenerator.getInstance("RSA").apply {
                     initialize(bits)
@@ -158,7 +157,7 @@ val KeyTest  by testSuite {
     }
 
     "EC and RSA" - {
-        withDataSuites(512, 1024, 2048, 3072, 4096) { rsaBits ->
+        withData(512, 1024, 2048, 3072, 4096) - { rsaBits ->
             withData(256, 384, 521) { ecBits ->
                 val keyPairEC1 = KeyPairGenerator.getInstance("EC").also { it.initialize(ecBits) }.genKeyPair()
                 val keyPairEC2 = KeyPairGenerator.getInstance("EC").also { it.initialize(ecBits) }.genKeyPair()

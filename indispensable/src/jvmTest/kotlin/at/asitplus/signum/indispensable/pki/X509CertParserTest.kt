@@ -15,7 +15,6 @@ import io.kotest.assertions.withClue
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -182,7 +181,7 @@ val X509CertParserTest  by testSuite {
             }
         }
 
-        withDataSuites(certs) {
+        withData(certs) - {
             withData(it) {
                 val encodedSrc = it.decodeToByteArray(Base64 {})
 

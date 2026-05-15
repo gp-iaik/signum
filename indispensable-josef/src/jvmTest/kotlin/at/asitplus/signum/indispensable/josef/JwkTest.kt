@@ -18,7 +18,6 @@ import com.ionspin.kotlin.bignum.integer.Sign
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -36,7 +35,7 @@ import kotlin.time.Clock
 
 val JwkTest  by testSuite {
     "EC" - {
-        withDataSuites(256, 384, 521) { bits ->
+        withData(256, 384, 521) - { bits ->
             val keys = List<ECPublicKey>(10) {
                 val ecKp = KeyPairGenerator.getInstance("EC").apply {
                     initialize(bits)

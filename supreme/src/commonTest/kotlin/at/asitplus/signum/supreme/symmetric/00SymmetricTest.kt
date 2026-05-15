@@ -17,7 +17,6 @@ import at.asitplus.signum.supreme.symmetric.discouraged.encrypt
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.assertions.withClue
 import io.kotest.engine.runBlocking
@@ -105,7 +104,7 @@ val SymmetricTest by testSuite {
 
 
     "Illegal IV Size" - {
-        withDataSuites(
+        withData(
             SymmetricEncryptionAlgorithm.AES_128.CBC.PLAIN,
             SymmetricEncryptionAlgorithm.AES_192.CBC.PLAIN,
             SymmetricEncryptionAlgorithm.AES_256.CBC.PLAIN,
@@ -131,7 +130,7 @@ val SymmetricTest by testSuite {
 
             SymmetricEncryptionAlgorithm.ChaCha20Poly1305,
 
-            ) { alg ->
+            ) - { alg ->
 
             withData(
                 nameFn = { "${it?.size} Bytes" },
@@ -161,7 +160,7 @@ val SymmetricTest by testSuite {
 
 
     "Illegal Key Size" - {
-        withDataSuites(
+        withData(
             SymmetricEncryptionAlgorithm.AES_128.CBC.PLAIN,
             SymmetricEncryptionAlgorithm.AES_192.CBC.PLAIN,
             SymmetricEncryptionAlgorithm.AES_256.CBC.PLAIN,
@@ -187,7 +186,7 @@ val SymmetricTest by testSuite {
 
             SymmetricEncryptionAlgorithm.ChaCha20Poly1305
 
-        ) { alg ->
+        ) - { alg ->
 
             withData(
                 nameFn = { "${it.size} Bytes" },
@@ -240,12 +239,12 @@ val SymmetricTest by testSuite {
 
     "CBC.PLAIN" - {
 
-        withDataSuites(
+        withData(
             SymmetricEncryptionAlgorithm.AES_128.CBC.PLAIN,
             SymmetricEncryptionAlgorithm.AES_192.CBC.PLAIN,
             SymmetricEncryptionAlgorithm.AES_256.CBC.PLAIN,
-        ) {
-            withDataSuites(
+        ) - {
+            withData(
                 nameFn = { "${it.size} Bytes" },
                 InsecureRandom.nextBytes(5),
                 InsecureRandom.nextBytes(15),
@@ -258,7 +257,7 @@ val SymmetricTest by testSuite {
                 InsecureRandom.nextBytes(257),
                 InsecureRandom.nextBytes(1257),
                 InsecureRandom.nextBytes(21257),
-            ) { plaintext ->
+            ) - { plaintext ->
 
                 val key = runBlocking { it.randomKey(InsecureRandom) }
 
@@ -334,15 +333,15 @@ val SymmetricTest by testSuite {
     }
 
     "GCM + ChaCha-Poly1503" - {
-        withDataSuites(
+        withData(
             SymmetricEncryptionAlgorithm.AES_128.GCM,
             SymmetricEncryptionAlgorithm.AES_192.GCM,
             SymmetricEncryptionAlgorithm.AES_256.GCM,
 
             SymmetricEncryptionAlgorithm.ChaCha20Poly1305
-        ) { alg ->
+        ) - { alg ->
 
-            withDataSuites(
+            withData(
                 nameFn = { "${it.size} Bytes" },
                 InsecureRandom.nextBytes(5),
                 InsecureRandom.nextBytes(15),
@@ -355,14 +354,14 @@ val SymmetricTest by testSuite {
                 InsecureRandom.nextBytes(257),
                 InsecureRandom.nextBytes(1257),
                 InsecureRandom.nextBytes(21257),
-            ) { plaintext ->
+            ) - { plaintext ->
                 val key = runBlocking { alg.randomKey(InsecureRandom) }
-                withDataSuites(
+                withData(
                     nameFn = { "IV: " + it?.toHexString()?.substring(0..8) },
                     alg.randomNonce(),
                     alg.randomNonce(),
                     null
-                ) { iv ->
+                ) - { iv ->
 
                     withData(
                         nameFn = { "AAD: " + it?.toHexString() },
@@ -427,7 +426,7 @@ val SymmetricTest by testSuite {
     }
 
     "CBC+HMAC" - {
-        withDataSuites(
+        withData(
             nameFn = { it.first },
             "Default" to DefaultMacInputCalculation,
             "Oklahoma MAC" to { ciphertext: ByteArray, iv: ByteArray?, aad: ByteArray? ->
@@ -435,8 +434,8 @@ val SymmetricTest by testSuite {
                         (iv ?: byteArrayOf()) +
                         (aad ?: byteArrayOf()) +
                         ciphertext
-            }) { (_, macInputFun) ->
-            withDataSuites(
+            }) - { (_, macInputFun) ->
+            withData(
                 SymmetricEncryptionAlgorithm.AES_128.CBC.HMAC.SHA_1.Custom(
                     HMAC.SHA1.outputLength,
                     DefaultMacAuthTagTransformation,
@@ -494,8 +493,8 @@ val SymmetricTest by testSuite {
                     HMAC.SHA512.outputLength,
                     macInputFun,
                 ),
-            ) {
-                withDataSuites(
+            ) - {
+                withData(
                     nameFn = { "${it.size} Bytes" },
                     InsecureRandom.nextBytes(16),
                     byteArrayOf(),
@@ -509,23 +508,23 @@ val SymmetricTest by testSuite {
                     InsecureRandom.nextBytes(257),
                     InsecureRandom.nextBytes(1257),
                     InsecureRandom.nextBytes(21257),
-                ) { plaintext ->
+                ) - { plaintext ->
 
                     val secretKey = runBlocking { it.randomKey(InsecureRandom).encryptionKey.getOrThrow() }
 
-                    withDataSuites(
+                    withData(
                         nameFn = { "MAC KEY $it" },
                         16, 32, 64, 128, secretKey.size
-                    ) { macKeyLen ->
+                    ) - { macKeyLen ->
 
                         val key = runBlocking { it.randomKey(macKeyLen.bytes, InsecureRandom) }
 
-                        withDataSuites(
+                        withData(
                             nameFn = { "IV: " + it?.toHexString()?.substring(0..8) },
                             InsecureRandom.nextBytes((it.nonceSize.bytes).toInt()),
                             InsecureRandom.nextBytes((it.nonceSize.bytes).toInt()),
                             null
-                        ) { iv ->
+                        ) - { iv ->
                             withData(
                                 nameFn = { "AAD: " + it?.toHexString()?.substring(0..8) },
                                 InsecureRandom.nextBytes(32),
@@ -640,7 +639,7 @@ val SymmetricTest by testSuite {
     }
 
     "ECB + WRAP" - {
-        withDataSuites(
+        withData(
             SymmetricEncryptionAlgorithm.AES_128.ECB,
             SymmetricEncryptionAlgorithm.AES_192.ECB,
             SymmetricEncryptionAlgorithm.AES_256.ECB,
@@ -651,7 +650,7 @@ val SymmetricTest by testSuite {
             SymmetricEncryptionAlgorithm.AES_192.WRAP.RFC3394,
             SymmetricEncryptionAlgorithm.AES_256.WRAP.RFC3394,
 
-            ) { alg ->
+            ) - { alg ->
 
             withData(
                 nameFn = { "data: ${it.size} bytes" },
@@ -756,7 +755,7 @@ val SymmetricTest by testSuite {
 
 
     "Equality" - {
-        withDataSuites(allAlgorithms) { alg ->
+        withData(allAlgorithms) - { alg ->
             withData(
                 nameFn = { "data: ${it.size} bytes" },
                 //multiples of 8, so AES-KW works
@@ -921,7 +920,7 @@ val SymmetricTest by testSuite {
 
     "Edge Cases " - {
         "all good" - {
-            withDataSuites(
+            withData(
                 SymmetricEncryptionAlgorithm.AES_128.ECB,
                 SymmetricEncryptionAlgorithm.AES_192.ECB,
                 SymmetricEncryptionAlgorithm.AES_256.ECB,
@@ -937,7 +936,7 @@ val SymmetricTest by testSuite {
                 /*NO WRAP, because it has constraints on input size*/
                 SymmetricEncryptionAlgorithm.ChaCha20Poly1305,
 
-                ) { alg ->
+                ) - { alg ->
 
                 withData(0, 1, 4096) { sz ->
                     val data = Random.nextBytes(sz)
@@ -948,7 +947,7 @@ val SymmetricTest by testSuite {
         }
 
         "algorithm mismatch" - {
-            withDataSuites(allAlgorithms) { alg ->
+            withData(allAlgorithms) - { alg ->
                 withData(allAlgorithms.filterNot { it == alg }) { wrongAlg ->
                     val encrypted =
                         alg.randomKey(InsecureRandom).encrypt(Random.nextBytes(64)/*works with wrapping*/).getOrThrow()
@@ -960,7 +959,7 @@ val SymmetricTest by testSuite {
             }
         }
         "illegal key sizes" - {
-            withDataSuites(allAlgorithms) { alg ->
+            withData(allAlgorithms) - { alg ->
                 val wrongSized = mutableListOf<Int>()
                 while (wrongSized.size < 100) {
                     val wrong = Random.nextUInt(until = 1025u).toInt()
@@ -985,7 +984,7 @@ val SymmetricTest by testSuite {
         }
 
         "illegal nonce sizes" - {
-            withDataSuites(allAlgorithms.filter { it.requiresNonce() }) { alg ->
+            withData(allAlgorithms.filter { it.requiresNonce() }) - { alg ->
                 alg as SymmetricEncryptionAlgorithm.RequiringNonce<*, *>
                 val wrongSized = mutableListOf<Int>()
                 while (wrongSized.size < 100) {

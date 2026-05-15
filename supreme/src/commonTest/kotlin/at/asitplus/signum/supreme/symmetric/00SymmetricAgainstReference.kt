@@ -8,22 +8,14 @@ import at.asitplus.signum.indispensable.symmetric.nonce
 import at.asitplus.signum.supreme.symmetric.discouraged.andPredefinedNonce
 import at.asitplus.signum.supreme.symmetric.discouraged.encrypt
 import io.kotest.assertions.withClue
-import at.asitplus.testballoon.*
 import at.asitplus.testballoon.minus
-import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
-import at.asitplus.testballoon.checkAll
-import at.asitplus.testballoon.checkAllSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import de.infix.testBalloon.framework.core.TestConfig
-import de.infix.testBalloon.framework.core.testScope
-import kotlin.time.Duration.Companion.minutes
 
 @OptIn(HazardousMaterials::class)
 val SymmetricAgainstReference  by testSuite {

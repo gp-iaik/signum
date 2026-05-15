@@ -6,7 +6,6 @@ import at.asitplus.signum.supreme.azString
 import at.asitplus.testballoon.checkAll
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -53,7 +52,7 @@ val RFC9380Test by testSuite {
                     "Q1?\\.y\\s+=)?\\s+([0-9a-f\\s]+)"
         )
         val whitespacePattern = Regex("\\s")
-        withDataSuites(
+        withData(
             nameFn = SuiteTestInfo::suiteName, sequenceOf(
                 SuiteTestInfo(
                     suiteName = "P256_XMD:SHA-256_SSWU_RO_", suiteRef = RFC9380::`P256_XMD∶SHA-256_SSWU_RO_`,
@@ -661,8 +660,7 @@ Q.y     = 0068889ea2e1442245fe42bfda9e58266828c0263119f35a61631a
           938959a83a1f7dd4a6fd395b"""
                 )
             )
-        )
-        { suiteInfo ->
+        ) - { suiteInfo ->
             val suite = suiteInfo.suiteRef(suiteInfo.dstB)
 
             class TestInfo private constructor(
@@ -687,7 +685,7 @@ Q.y     = 0068889ea2e1442245fe42bfda9e58266828c0263119f35a61631a
                                 ""
                             ).ifEmpty { null })
             }
-            withDataSuites(
+            withData(
                 nameFn = {
                     "Input: \"${
                         it.msg.substring(
@@ -697,8 +695,7 @@ Q.y     = 0068889ea2e1442245fe42bfda9e58266828c0263119f35a61631a
                     }${if (it.msg.length > 10) "…" else ""}\""
                 },
                 testcasePattern.findAll(suiteInfo.tests).map(::TestInfo)
-            )
-            { test ->
+            ) - { test ->
                 test("hash_to_curve") {
                     val result = suite(test.msg.encodeToByteArray()).normalize()
                     result.curve shouldBe suiteInfo.curve

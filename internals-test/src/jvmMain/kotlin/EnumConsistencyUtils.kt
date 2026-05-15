@@ -6,6 +6,7 @@ import at.asitplus.signum.Enumeration
 import de.infix.testBalloon.framework.core.testSuite
 import de.infix.testBalloon.framework.shared.TestElementName
 import de.infix.testBalloon.framework.shared.TestRegistering
+import de.infix.testBalloon.framework.shared.TestSuitePropertyName
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
 import io.kotest.assertions.asClue
@@ -58,7 +59,7 @@ private val KClass<*>.explicitCompanionObject: KClass<*>? get() = this.companion
 }
 
 @TestRegistering
-fun enumConsistencyTest(@TestElementName name: String = "") = testSuite(name = name) { test("Enum consistency") {
+fun enumConsistencyTest(@TestElementName name: String? = null, @TestSuitePropertyName qualifiedPropertyName: String = "") = testSuite(name = name, qualifiedPropertyName = qualifiedPropertyName, ) { test("Enum consistency") {
     ClassGraph()
         .enableClassInfo()
         .enableExternalClasses()

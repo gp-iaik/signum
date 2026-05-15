@@ -13,7 +13,6 @@ import at.asitplus.signum.supreme.symmetric.encrypt
 import at.asitplus.testballoon.invoke
 import at.asitplus.testballoon.minus
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.engine.runBlocking
@@ -33,7 +32,7 @@ val JvmSymmetricTest by testSuite {
 
     "Against JCA" - {
         "AES" - {
-            withDataSuites(
+            withData(
                 SymmetricEncryptionAlgorithm.AES_128.CBC.PLAIN,
                 SymmetricEncryptionAlgorithm.AES_192.CBC.PLAIN,
                 SymmetricEncryptionAlgorithm.AES_256.CBC.PLAIN,
@@ -43,14 +42,14 @@ val JvmSymmetricTest by testSuite {
                 SymmetricEncryptionAlgorithm.AES_192.GCM,
                 SymmetricEncryptionAlgorithm.AES_256.GCM,
 
-                ) { alg ->
-                withDataSuites(
+                ) - { alg ->
+                withData(
                     nameFn = { "iv: ${it.size} bytes" }, alg.randomNonce(), alg.randomNonce()
-                ) { iv ->
-                    withDataSuites(
+                ) - { iv ->
+                    withData(
                         nameFn = { "aad: ${it?.size} bytes" }, alg.randomNonce(), alg.randomNonce(),
                         Random.nextBytes(19), null
-                    ) { aad ->
+                    ) - { aad ->
                         withData(
                             nameFn = { "data: ${it.size} bytes" }, alg.randomNonce(), alg.randomNonce(),
                             Random.nextBytes(19),
@@ -152,7 +151,7 @@ val JvmSymmetricTest by testSuite {
                 }
             }
             "ECB + WRAP" - {
-                withDataSuites(
+                withData(
 
                     SymmetricEncryptionAlgorithm.AES_128.ECB,
                     SymmetricEncryptionAlgorithm.AES_192.ECB,
@@ -164,7 +163,7 @@ val JvmSymmetricTest by testSuite {
                     SymmetricEncryptionAlgorithm.AES_192.WRAP.RFC3394,
                     SymmetricEncryptionAlgorithm.AES_256.WRAP.RFC3394,
 
-                    ) { alg ->
+                    ) - { alg ->
 
                     withData(
                         nameFn = { "data: ${it.size} bytes" },
@@ -298,10 +297,10 @@ val JvmSymmetricTest by testSuite {
 
     "ChaCha20-Poly1305" - {
         val alg = SymmetricEncryptionAlgorithm.ChaCha20Poly1305
-        withDataSuites(
+        withData(
             nameFn = { "iv: ${it?.size} bytes" }, alg.randomNonce(), alg.randomNonce(), null
-        ) { nonce ->
-            withDataSuites(Random.nextBytes(19), null) { aad ->
+        ) - { nonce ->
+            withData(Random.nextBytes(19), null) - { aad ->
                 withData(
                     nameFn = { "Random ${it.size} bytes" },
                     Random.nextBytes(19),

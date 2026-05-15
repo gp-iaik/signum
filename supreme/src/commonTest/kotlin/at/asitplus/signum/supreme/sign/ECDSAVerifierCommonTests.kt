@@ -8,7 +8,6 @@ import at.asitplus.signum.indispensable.SignatureAlgorithm
 import at.asitplus.signum.indispensable.decodeFromDer
 import at.asitplus.signum.supreme.succeed
 import at.asitplus.testballoon.withData
-import at.asitplus.testballoon.withDataSuites
 import de.infix.testBalloon.framework.core.testSuite
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
@@ -385,8 +384,8 @@ val ECDSAVerifierCommonTests  by testSuite {
         .groupBy(RawTestInfo::crv)
         .mapValues { it.value.groupBy(RawTestInfo::dig).mapValues { (_,v) -> v.map(::TestInfo) } }
 
-    withDataSuites(tests) { byCurve ->
-        withDataSuites(byCurve) { byDigest ->
+    withData(tests) - { byCurve ->
+        withData(byCurve) - { byDigest ->
             withData(nameFn = TestInfo::b64msg, byDigest) { test ->
                 val verifier = SignatureAlgorithm.ECDSA(test.digest, null).verifierFor(test.key).getOrThrow()
                 verifier.verify(test.msg, test.sig) should succeed
