@@ -14,6 +14,7 @@ classgraph = "4.8.184"
 bouncycastle= "1.83"
 testballoon = "0.8.2-K2.3.0"
 testballoonAddons = "0.7.1"
+awesn1 = "0.2.0-SNAPSHOT"
 
 [libraries]
 bignum = { group = "com.ionspin.kotlin", name = "bignum", version.ref = "bignum" }
@@ -28,6 +29,11 @@ classgraph = { group = "io.github.classgraph", name = "classgraph", version.ref 
 
 #for build logic conventions plugin, as it needs the artefact, not the plugin ID
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+
+awesn1-core = { group = "at.asitplus.awesn1", name = "core", version.ref = "awesn1" }
+awesn1-crypto = { group = "at.asitplus.awesn1", name = "crypto", version.ref = "awesn1" }
+awesn1-io = { group = "at.asitplus.awesn1", name = "io", version.ref = "awesn1" }
+awesn1-oids = { group = "at.asitplus.awesn1", name = "oids", version.ref = "awesn1" }
 
 [plugins]
 asp = { id = "at.asitplus.gradle.conventions", version.ref = "asp" }

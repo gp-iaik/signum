@@ -1,9 +1,12 @@
 package at.asitplus.signum.indispensable
 
 import at.asitplus.KmmResult
+import at.asitplus.awesn1.Asn1Sequence
+import at.asitplus.awesn1.Identifiable
+import at.asitplus.awesn1.crypto.SubjectPublicKeyInfo
 import at.asitplus.catching
 import at.asitplus.io.*
-import at.asitplus.signum.indispensable.asn1.*
+import at.asitplus.signum.indispensable.asn1.ParsedAwesn1PEMType
 import at.asitplus.signum.indispensable.asn1.encoding.*
 import at.asitplus.signum.indispensable.asn1.encoding.Asn1.BitString
 import at.asitplus.signum.indispensable.asn1.encoding.Asn1.Null
@@ -19,7 +22,9 @@ private const val PEM_BOUNDARY = "PUBLIC KEY"
 /**
  * Representation of a public key structure
  */
-sealed class CryptoPublicKey : PemEncodable<Asn1Sequence>, Identifiable {
+abstract class CryptoPublicKey : ParsedAwesn1PEMType<SubjectPublicKeyInfo, Asn1Sequence>, Identifiable {
+
+    override val pemLabel get() = PEM_BOUNDARY
 
     /**
      * This is meant for storing additional properties, which may be relevant for certain use cases.
@@ -38,26 +43,6 @@ sealed class CryptoPublicKey : PemEncodable<Asn1Sequence>, Identifiable {
      * Representation of the key in the format used by iOS, EC compression is used if key was compressed on reception
      */
     abstract val iosEncoded: ByteArray
-
-    override fun encodeToTlv() = when (this) {
-        is EC -> Asn1.Sequence {
-            +Asn1.Sequence {
-                +oid
-                +curve.oid
-            }
-            +BitString(iosEncoded)
-        }
-
-        is RSA -> {
-            Asn1.Sequence {
-                +Asn1.Sequence {
-                    +oid
-                    +Null()
-                }
-                +BitString(iosEncoded)
-            }
-        }
-    }
 
 
     companion object : PemDecodable<Asn1Sequence, CryptoPublicKey>(
@@ -218,6 +203,15 @@ sealed class CryptoPublicKey : PemEncodable<Asn1Sequence>, Identifiable {
 
         override val iosEncoded by lazy { pkcsEncoded }
 
+        override fun encodeToTlv() =
+            Asn1.Sequence {
+                +Asn1.Sequence {
+                    +oid
+                    +Null()
+                }
+                +BitString(iosEncoded)
+            }
+
         /**
          * PKCS#1 encoded RSA Public Key
          */
@@ -312,6 +306,15 @@ sealed class CryptoPublicKey : PemEncodable<Asn1Sequence>, Identifiable {
         }
 
         override val iosEncoded by lazy { toAnsiX963Encoded(useCompressed = false) }
+
+        override fun encodeToTlv() =
+            Asn1.Sequence {
+                +Asn1.Sequence {
+                    +oid
+                    +curve.oid
+                }
+                +BitString(iosEncoded)
+            }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

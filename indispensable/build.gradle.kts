@@ -24,6 +24,10 @@ kotlin {
         commonMain.dependencies {
             api(project(":indispensable-asn1"))
             api(project(":indispensable-oids"))
+            api(libs.awesn1.core)
+            api(libs.awesn1.crypto)
+            api(libs.awesn1.io)
+            api(libs.awesn1.oids)
             api(libs.multibase)
             api(libs.bignum)
             implementation(project(":internals"))
