@@ -45,7 +45,7 @@ val WalletAttestationJwtTest by testSuite {
 
         val parsed: WalletAttestationPayload = joseCompliantSerializer.decodeFromString(input)
 
-        parsed.jwtClaims.issuer.shouldBeNull()
+        parsed.jwtBaseClaims.issuer.shouldBeNull()
         parsed.walletAttestationClaims.walletName shouldBe "Wallet Solution X by Wonderland State Department"
         parsed.walletAttestationClaims.walletVersion shouldBe "1.2.3"
         parsed.walletAttestationClaims.walletLink shouldBe "https://example.com/wallet/detail_info.html"
